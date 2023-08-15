@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Mail, User, Lock, QrCode } from 'lucide-react';
+
+//Iconos Insanos del framework lucide
+import { Mail, User, Lock, LockOpen, QrCode, Eye, EyeClosed } from 'lucide-react';
 
 export const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,6 +17,12 @@ export const RegisterForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  //Variable de estado para mostrar la password
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+
+
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +78,7 @@ export const RegisterForm: React.FC = () => {
           required
         />
       </div>
+      <p className="text-xs text-gray-500 -mt-2">* Indica un correo eléctronico válido para la verificación</p>
       
       <div className="relative">
         <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -86,25 +95,36 @@ export const RegisterForm: React.FC = () => {
       <div className="relative">
         <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
         <Input 
-          type="password" 
+          type={showPassword ? 'text' : 'password'} 
           placeholder="Contraseña" 
           className="pl-10" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        
+        
+        <div className="absolute right-3 top-2 h-5 w-5 text-gray-400 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+          {!showPassword ? <EyeClosed className='flex justify-self-center items-center'/> : <Eye className='flex justify-self-center'/>}
+        </div>
+
       </div>
       
       <div className="relative">
-        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+        <LockOpen className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
         <Input 
-          type="password" 
+          type={showPassword2 ? 'text' : 'password'} 
           placeholder="Confirmar contraseña" 
           className="pl-10" 
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
+        
+        <div className="absolute right-3 top-2 h-5 w-5 text-gray-400 cursor-pointer" onClick={() => setShowPassword2(!showPassword2)}>
+          {!showPassword2 ? <EyeClosed className='flex justify-self-center items-center'/> : <Eye className='flex justify-self-center'/>}
+        </div>
+
       </div>
       
       <div className="relative">
@@ -131,7 +151,7 @@ export const RegisterForm: React.FC = () => {
 
       <div className="flex items-center my-2">
         <div className="flex-grow h-px bg-gray-300"></div>
-        <span className="px-4 text-gray-500 text-sm">o</span>
+        <span className="px-4 text-gray-500 text-sm">O</span>
         <div className="flex-grow h-px bg-gray-300"></div>
       </div>
 
@@ -165,8 +185,8 @@ export const RegisterForm: React.FC = () => {
       </Button>
       
       <div className="text-center mt-4">
-        <span className="text-gray-600">¿Ya tienes una cuenta?</span>{' '}
-        <a href="/login" className="text-shurtle-primary hover:underline">
+        <span className="text-gray-600 font-bold ">¿Ya tienes una cuenta?</span>{' '}
+        <a href="/login" className="text-shurtle-primary hover:underline ">
           Iniciar sesión
         </a>
       </div>
