@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Carousel, 
   CarouselContent, 
@@ -8,6 +8,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { CheckCircle } from "lucide-react";
+import { useEmblaCarousel } from 'embla-carousel-react';
 
 type CarouselSlide = {
   id: number;
@@ -60,49 +61,94 @@ export const WelcomeCarousel: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [bgColor, setBgColor] = useState(slides[0].bgColor);
   
-  const handleSlideChange = (index: number) => {
-    setActiveSlide(index);
-    setBgColor(slides[index].bgColor);
-  };
+  // Use Embla Carousel hook directly
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+
+  // Function to go to next slide
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  // Handle slide change
+  const handleSlideChange = useCallback(() => {
+    if (!emblaApi) return;
+    const currentIndex = emblaApi.selectedScrollSnap();
+    setActiveSlide(currentIndex);
+    setBgColor(slides[currentIndex].bgColor);
+  }, [emblaApi]);
+
+  // Set up the event listeners when emblaApi changes
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    // Add event listeners
+    emblaApi.on('select', handleSlideChange);
+    
+    // Initial slide setup
+    handleSlideChange();
+    
+    // Clean up
+    return () => {
+      emblaApi.off('select', handleSlideChange);
+    };
+  }, [emblaApi, handleSlideChange]);
+
+  // Set up auto rotation
+  useEffect(() => {
+    const autoplayInterval = setInterval(() => {
+      scrollNext();
+    }, 5000); // Change slide every 5 seconds
+    
+    return () => {
+      clearInterval(autoplayInterval);
+    };
+  }, [scrollNext]);
 
   return (
     <div className={`transition-colors duration-500 ease-in-out ${bgColor} h-full w-full px-8 pt-16 pb-8 flex flex-col justify-center shurtle-curve`}>
       <div className="max-w-md mx-auto">
         <h1 className="text-4xl font-bold mb-6 text-white">La mejor aplicación de control parental</h1>
         
-        <Carousel
-          opts={{ loop: true }}
-          className="w-full mt-12"
-          onSlideChange={(index) => handleSlideChange(index)}
-        >
-          <CarouselContent>
-            {slides.map((slide, index) => (
-              <CarouselItem key={slide.id} className="flex flex-col items-center">
-                <img 
-                  src={slide.image} 
-                  alt={slide.title} 
-                  className="w-48 h-48 object-cover rounded-lg mb-6 shadow-lg"
-                />
-                <h2 className="text-2xl font-semibold mb-4 text-white">{slide.title}</h2>
-                <div className="space-y-3 w-full">
-                  {slide.listItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-shurtle-primary flex items-center justify-center text-white">
-                        <CheckCircle className="w-4 h-4" />
+        <div className="w-full mt-12">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex">
+              {slides.map((slide) => (
+                <div 
+                  key={slide.id} 
+                  className="flex-[0_0_100%] min-w-0 flex flex-col items-center"
+                >
+                  <img 
+                    src={slide.image} 
+                    alt={slide.title} 
+                    className="w-48 h-48 object-cover rounded-lg mb-6 shadow-lg"
+                  />
+                  <h2 className="text-2xl font-semibold mb-4 text-white">{slide.title}</h2>
+                  <div className="space-y-3 w-full">
+                    {slide.listItems.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-shurtle-primary flex items-center justify-center text-white">
+                          <CheckCircle className="w-4 h-4" />
+                        </div>
+                        <span className="text-white">{item}</span>
                       </div>
-                      <span className="text-white">{item}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+              ))}
+            </div>
+          </div>
           
           <div className="flex justify-center gap-4 mt-6">
-            <CarouselPrevious className="relative static left-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" />
-            <CarouselNext className="relative static right-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" />
+            <CarouselPrevious 
+              onClick={() => emblaApi?.scrollPrev()} 
+              className="relative static left-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
+            />
+            <CarouselNext 
+              onClick={() => emblaApi?.scrollNext()} 
+              className="relative static right-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
+            />
           </div>
-        </Carousel>
+        </div>
         
         <div className="absolute bottom-8 left-8 text-sm text-white/70">
           © 2024 - 2025 Frognova, México
