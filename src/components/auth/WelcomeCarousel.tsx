@@ -8,7 +8,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { CheckCircle } from "lucide-react";
-import { useEmblaCarousel } from 'embla-carousel-react';
+import * as Embla from 'embla-carousel-react';
 
 type CarouselSlide = {
   id: number;
@@ -61,8 +61,8 @@ export const WelcomeCarousel: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [bgColor, setBgColor] = useState(slides[0].bgColor);
   
-  // Use Embla Carousel hook directly
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  // Use Embla Carousel hook with correct import
+  const [emblaRef, emblaApi] = Embla.default({ loop: true });
 
   // Function to go to next slide
   const scrollNext = useCallback(() => {
