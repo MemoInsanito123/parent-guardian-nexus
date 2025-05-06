@@ -61,7 +61,7 @@ export const WelcomeCarousel: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [bgColor, setBgColor] = useState(slides[0].bgColor);
   
-  // Use Embla Carousel hook with correct import
+  // Use Embla Carousel hook with proper import
   const [emblaRef, emblaApi] = Embla.default({ loop: true });
 
   // Function to go to next slide
@@ -138,16 +138,19 @@ export const WelcomeCarousel: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex justify-center gap-4 mt-6">
-            <CarouselPrevious 
-              onClick={() => emblaApi?.scrollPrev()} 
-              className="relative static left-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
-            />
-            <CarouselNext 
-              onClick={() => emblaApi?.scrollNext()} 
-              className="relative static right-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
-            />
-          </div>
+          {/* Use Carousel component to wrap navigation buttons */}
+          <Carousel>
+            <div className="flex justify-center gap-4 mt-6">
+              <CarouselPrevious 
+                onClick={() => emblaApi?.scrollPrev()} 
+                className="relative static left-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
+              />
+              <CarouselNext 
+                onClick={() => emblaApi?.scrollNext()} 
+                className="relative static right-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
+              />
+            </div>
+          </Carousel>
         </div>
         
         <div className="absolute bottom-8 left-8 text-sm text-white/70">
