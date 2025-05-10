@@ -67,6 +67,8 @@ export default {
 					primary: '#00BFA5',
 					dark: '#102A43',
 					light: '#F8F9FA',
+					zelda: '#00c48e'
+
 				}
 			},
 			borderRadius: {
@@ -95,7 +97,7 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

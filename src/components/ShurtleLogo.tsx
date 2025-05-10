@@ -9,24 +9,24 @@ interface ShurtleLogoProps {
 
 export const ShurtleLogo: React.FC<ShurtleLogoProps> = ({
   variant = 'default',
-  size = 'md',
+  size = 'sm',
   showText = true
 }) => {
   const sizeClasses = {
     sm: 'h-8',
     md: 'h-10',
-    lg: 'h-12'
+    lg: 'h-10'
   };
 
   return (
     <div className="flex items-center gap-2">
-      <img src="/shurtle-logo.svg" alt="Shurtle Logo" className={sizeClasses[size]} />
+      <img src="/iconShurtle.png" alt="Shurtle icon" className={sizeClasses[size]} />
       {showText && (
         <div className="flex items-center">
-          <span className={`font-bold text-${size === 'sm' ? 'xl' : size === 'md' ? '2xl' : '3xl'} ${variant === 'white' ? 'text-white' : 'text-shurtle-dark'}`}>
+          <span className='font-bold text-text-2xl text-shurtle-black '>
             SHURTLE
           </span>
-          <span className={`text-${size === 'sm' ? 'sm' : size === 'md' ? 'base' : 'lg'} font-medium text-shurtle-primary ml-1.5`}>
+          <span className= 'stext-sm text-shurtle-zelda ml-2 '>
             WEB
           </span>
         </div>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeClosed } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +12,9 @@ export const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  //Mostrar Password
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,13 +63,16 @@ export const LoginForm: React.FC = () => {
       <div className="relative">
         <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
         <Input 
-          type="password" 
+          type={showPassword ? 'text' : 'password'} 
           placeholder="Contraseña" 
           className="pl-10" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <div className='absolute right-3 top-2 h-5 w-5 text-gray-400 cursor-pointer' onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <Eye/> : <EyeClosed/>}
+        </div>
       </div>
       
       <a href="/forgot-password" className="text-sm text-shurtle-primary hover:underline self-end">

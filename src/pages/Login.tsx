@@ -23,7 +23,7 @@ const Login: React.FC = () => {
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <ShurtleLogo size="lg" />
-            <h2 className="text-2xl font-semibold mt-6 mb-2">Bienvenido a Shurtle WEB</h2>
+            <h2 className="text-2xl font-semibold mt-6 mb">Bienvenido a Shurtle WEB</h2>
           </div>
           
           <LoginForm />

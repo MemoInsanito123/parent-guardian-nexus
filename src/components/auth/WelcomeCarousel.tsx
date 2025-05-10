@@ -7,7 +7,9 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from "@/components/ui/carousel";
-import { CheckCircle } from "lucide-react";
+
+import { CheckCircle, ChartLine, Info, AlertTriangle, User, Clock, Lock, Pause, TrendingUp, BarChart, ListChecks, Lightbulb, Bug, Phone, CircleHelp, SlidersHorizontal } from "lucide-react";
+
 import * as Embla from 'embla-carousel-react';
 
 type CarouselSlide = {
@@ -21,41 +23,68 @@ type CarouselSlide = {
 const slides: CarouselSlide[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    title: "Monitoreo en tiempo real",
+    image: "./../../../public/img/controlParental.png",
+    title: "Control Parental",
     listItems: [
-      "Seguimiento de actividades",
-      "Control del tiempo de uso",
-      "Reportes personalizados",
-      "Alertas automáticas"
+      "Restricción de tiempo",
+      "Configuración de límites",
+      "Bloqueo de aplicación",
     ],
-    bgColor: "bg-blue-700"
+    bgColor: "bg-[#33009A]"
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    title: "Estadísticas detalladas",
+    image: "./../../../public/img/grafica02.png",
+    title: "Estadísticas y Seguimiento",
     listItems: [
-      "Gráficos de progreso",
-      "Análisis de habilidades",
-      "Comparativas semanales",
-      "Patrones de aprendizaje"
+      "Progreso de usuario",
+      "Tiempo invertido",
+      "Historial de actividades"
     ],
-    bgColor: "bg-indigo-700"
+    bgColor: "bg-[#00563E]"
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    title: "Herramientas educativas",
+    image: "./../../../public/img/rueda.png",
+    title: "Control Parental",
     listItems: [
-      "Juegos matemáticos",
-      "Actividades de aprendizaje",
-      "Recursos didácticos",
-      "Contenido interactivo"
+      "Preguntas frecuentes",
+      "Reporte de problemas",
+      "Contacto con nosotros"
     ],
-    bgColor: "bg-emerald-700"
+    bgColor: "bg-[#1A1E29]" 
   }
 ];
+
+const getItemIcon = (item: string, index: number) => {
+  const lowerCaseItem = item.toLowerCase();
+  switch (lowerCaseItem) {
+    case 'restricción de tiempo':
+      return <Clock className="w-7 h-7" color='#00CED1' strokeWidth={2.5}/>;
+    case 'configuración de límites':
+      return <SlidersHorizontal className="w-7 h-7" color='#FFD700' strokeWidth={2.5}/>; // Using SlidersHorizontal for 'limits'
+    case 'bloqueo de aplicación':
+      return <Lock className="w-7 h-7" color='#FF7F50' strokeWidth={2.5}/>;
+    case 'pausas y descansos':
+      return <Pause className="w-7 h-7" color='#eab308' strokeWidth={2.5}/>;
+    case 'progreso de usuario':
+      return <TrendingUp className="w-7 h-7" color='#3b82f6' strokeWidth={2.5}/>;
+    case 'tiempo invertido':
+      return <BarChart className="w-7 h-7" color='#8b5cf6' strokeWidth={2.5}/>;
+    case 'historial de actividades':
+      return <ListChecks className="w-7 h-7" color='#10b981' strokeWidth={2.5}/>;
+    case 'preguntas frecuentes':
+      return <CircleHelp  className="w-7 h-7" color='#6495ED' strokeWidth={2.5}/>;
+    case 'intrucciones':
+      return <Lightbulb className="w-7 h-7" color='#facc15' strokeWidth={2.5}/>; // Assuming 'intrucciones' is a typo for 'instrucciones'
+    case 'reporte de problemas':
+      return <Bug className="w-7 h-7" color='#CC5500' strokeWidth={2.5}/>;
+    case 'contacto con nosotros':
+      return <Phone className="w-7 h-7" color='#C0C0C0' strokeWidth={2.5}/>;
+    default:
+      return <span>{index + 1}</span>; // Fallback to index if no match
+  }
+};
 
 export const WelcomeCarousel: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -97,7 +126,7 @@ export const WelcomeCarousel: React.FC = () => {
   useEffect(() => {
     const autoplayInterval = setInterval(() => {
       scrollNext();
-    }, 5000); // Change slide every 5 seconds
+    }, 3000); // Change slide every 5 seconds
     
     return () => {
       clearInterval(autoplayInterval);
@@ -107,7 +136,7 @@ export const WelcomeCarousel: React.FC = () => {
   return (
     <div className={`transition-colors duration-500 ease-in-out ${bgColor} h-full w-full px-8 pt-16 pb-8 flex flex-col justify-center shurtle-curve`}>
       <div className="max-w-md mx-auto">
-        <h1 className="text-4xl font-bold mb-6 text-white">La mejor aplicación de control parental</h1>
+        <h1 className="text-4xl font-bold mb-6 text-white text-center">La mejor aplicación de</h1>
         
         <div className="w-full mt-12">
           <div className="overflow-hidden" ref={emblaRef}>
@@ -115,19 +144,22 @@ export const WelcomeCarousel: React.FC = () => {
               {slides.map((slide) => (
                 <div 
                   key={slide.id} 
-                  className="flex-[0_0_100%] min-w-0 flex flex-col items-center"
+                  className="flex-[0_0_100%] min-w-0 flex flex-col  items-center"
                 >
                   <img 
                     src={slide.image} 
                     alt={slide.title} 
-                    className="w-48 h-48 object-cover rounded-lg mb-6 shadow-lg"
+                    className="p-5 justify-center items-center"
                   />
-                  <h2 className="text-2xl font-semibold mb-4 text-white">{slide.title}</h2>
-                  <div className="space-y-3 w-full">
+                  <h2 className="text-2xl font-semibold mb-2 text-white p-4">{slide.title}</h2>
+                  <div className="space-y-6 w-full">
                     {slide.listItems.map((item, idx) => (
                       <div key={idx} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-shurtle-primary flex items-center justify-center text-white">
-                          <CheckCircle className="w-4 h-4" />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white">
+                        {
+                        //Llamamos la funcion para que asigne el icono dependiendo de el item y su indicie[]
+                        }
+                        {getItemIcon(item, idx)}
                         </div>
                         <span className="text-white">{item}</span>
                       </div>
@@ -137,23 +169,9 @@ export const WelcomeCarousel: React.FC = () => {
               ))}
             </div>
           </div>
-          
-          {/* Use Carousel component to wrap navigation buttons */}
-          <Carousel>
-            <div className="flex justify-center gap-4 mt-6">
-              <CarouselPrevious 
-                onClick={() => emblaApi?.scrollPrev()} 
-                className="relative static left-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
-              />
-              <CarouselNext 
-                onClick={() => emblaApi?.scrollNext()} 
-                className="relative static right-0 translate-y-0 bg-white/20 hover:bg-white/30 border-white/30" 
-              />
-            </div>
-          </Carousel>
         </div>
         
-        <div className="absolute bottom-8 left-8 text-sm text-white/70">
+        <div className="absolute bottom-0 left-4 text-sm text-white/70">
           © 2024 - 2025 Frognova, México
         </div>
       </div>
