@@ -1,21 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
-//Iconos Insanos del framework lucide
+//Importar la conexion con FireBase
+import { db } from '../../../firebase/firebaseConfig';
+//Importar las librerias para usar colecciones y documentos
+import { collection, getDocs } from 'firebase/firestore';
+
+
+//Iconos Insanos del framework Lucide para React
 import { Mail, User, Lock, LockOpen, QrCode, Eye, EyeClosed } from 'lucide-react';
 
 export const RegisterForm: React.FC = () => {
+  
+  //Variables de estado para el formulario 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [qrCode, setQrCode] = useState('');
+  const [activationCode, setActivationCode] = useState('');
+
+  //Variable para mostrar en el boton que esta cargando y bloquearlo para evitar errores
   const [isLoading, setIsLoading] = useState(false);
+  
+  //librería para mostrar notificaciones o mensajes emergentes en tu interfaz de usuario
   const { toast } = useToast();
+  //Librería estándar para la navegación en aplicaciones de una sola página (SPA)
   const navigate = useNavigate();
 
   //Variable de estado para mostrar la password
@@ -23,10 +36,10 @@ export const RegisterForm: React.FC = () => {
   const [showPassword2, setShowPassword2] = useState(false);
 
 
-
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     
+    //Verificar si ambas contraseñas son identicas
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
@@ -35,32 +48,36 @@ export const RegisterForm: React.FC = () => {
       });
       return;
     }
-    
+    //Cambiar el estado de la variable IsLoading
     setIsLoading(true);
     
-    // Simular una verificación de código QR y registro
-    setTimeout(() => {
-      // En un entorno real, aquí verificaríamos el código QR y registraríamos al usuario
-      if (qrCode === '123456') { // Código QR de ejemplo
-        // Registro exitoso
-        localStorage.setItem('user', JSON.stringify({
-          email,
-          name: username,
-          role: 'user'
-        }));
-        
-        toast({
-          title: "Registro exitoso",
-          description: "Tu cuenta ha sido creada correctamente",
-        });
-        navigate('/dashboard');
-      } else {
+    // Simular una verificación de código activacion y registro
+    setTimeout(async () => {
+      //Verificacion del codigo de activacion 
+      try{
+        //Hacemos un Fech al servidor Back-End
+        const codeExist = await fetch(`${import.meta.env.VITE_SHURTLE_SERVER}/api/codeExist?code=${activationCode}`);
+        let data = await codeExist.json();
+
+        //Desestruturar la informacion
+        let { exist, status_activation_code, ID_activation_code } = data;
+
+        //Verificar que el codigo Exista y valido
+        if( exist && status_activation_code ){
+
+        }
+      }
+      catch(error){
         toast({
           variant: "destructive",
-          title: "Código QR inválido",
-          description: "El código QR que ingresaste no es válido",
+          title: "Error en el registro",
+          description : "Error en el servidor"
         });
+        setIsLoading(false);
+        console.error("Error en la peticion del servidor", error);
       }
+
+
       setIsLoading(false);
     }, 1500);
   };
@@ -133,8 +150,8 @@ export const RegisterForm: React.FC = () => {
           type="text" 
           placeholder="Código de verificación" 
           className="pl-10" 
-          value={qrCode}
-          onChange={(e) => setQrCode(e.target.value)}
+          value={activationCode}
+          onChange={(e) => setActivationCode(e.target.value)}
           required
         />
       </div>
