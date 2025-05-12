@@ -1,18 +1,23 @@
 
 import React, { useEffect, useState } from 'react';
+//Para gestionar navegacion entre rutas para manejar en una sola ruta
 import { useNavigate } from 'react-router-dom';
+
+//Componente de UI
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
 //Importar la conexion con FireBase
-import { db } from '../../../firebase/firebaseConfig';
+import { db, auth } from '../../../firebase/firebaseConfig';
 //Importar las librerias para usar colecciones y documentos
-import { collection, getDocs } from 'firebase/firestore';
-
+import { doc, setDoc  } from 'firebase/firestore';
+//Importamos las librerias para fireAuth
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 //Iconos Insanos del framework Lucide para React
 import { Mail, User, Lock, LockOpen, QrCode, Eye, EyeClosed } from 'lucide-react';
+import { exit } from 'process';
 
 export const RegisterForm: React.FC = () => {
   
@@ -22,6 +27,8 @@ export const RegisterForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [activationCode, setActivationCode] = useState('');
+  //Licencia default para cualquier usuario de tipo cliente
+  const licenseUser = 3;
 
   //Variable para mostrar en el boton que esta cargando y bloquearlo para evitar errores
   const [isLoading, setIsLoading] = useState(false);
@@ -53,17 +60,46 @@ export const RegisterForm: React.FC = () => {
     
     // Simular una verificación de código activacion y registro
     setTimeout(async () => {
+      
       //Verificacion del codigo de activacion 
       try{
         //Hacemos un Fech al servidor Back-End
         const codeExist = await fetch(`${import.meta.env.VITE_SHURTLE_SERVER}/api/codeExist?code=${activationCode}`);
         let data = await codeExist.json();
 
-        //Desestruturar la informacion
+        //Desestruturar la informacion de la peticion
         let { exist, status_activation_code, ID_activation_code } = data;
-
-        //Verificar que el codigo Exista y valido
-        if( exist && status_activation_code ){
+        
+        //Test
+        console.log(exist, status_activation_code);
+        //Verificar que el codigo Exista y esta activo
+        //Codigo existente y no canjeado
+        if( exist && !status_activation_code ){          
+          //Registrar al cliente en Firebase Auth
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          //Obtener el ID con el que se registro en FireAuth
+          const uid = userCredential.user.uid;
+          
+          //Registrar al usuario en la FIrebaseStore
+            const docRef = setDoc(doc(db, 'users', uid), {
+            activationCode : activationCode,
+            email : email,
+            license : licenseUser,
+            username : username
+          });
+          console.log('Usuario registrado');
+        }
+        //Codigo existente y canjeado
+        else if(exist && status_activation_code){
+          //Mandar alerta al cliente que el codigo ya fue canjeado
+          toast({
+          variant: "destructive",
+          title: "Código de activación",
+          description : "Este código de activación ya fue canjeado"
+        });
+        }
+        //Codigo inexistente
+        else{
 
         }
       }
